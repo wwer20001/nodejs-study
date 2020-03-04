@@ -9,9 +9,11 @@ var app = http.createServer(function(request, response){
     if(_url == '/'){
         title = 'Welcome';
     }
+
     if(_url == '/favicon.ico'){
         return response.writeHead(404);
     }
+
     response.writeHead(200);
     fs.readFile(`data/${queryData.id}`, 'utf8', (err, desc) => {
       var template = `
