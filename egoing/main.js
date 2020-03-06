@@ -9,9 +9,17 @@ var app = http.createServer(function(request, response){
 
     if(pathname === '/'){
       if(queryData.id === undefined){
-        fs.readFile(`data/${queryData.id}`, 'utf8', (err, desc) => {
+        fs.readdir('./data', function(err, files){
           var title = 'Welcome';
           var desc = 'Hello, Node.js';
+          var list = `<ul>`
+          for (let i = 0; i < files.length; i++) {
+            var filename = files[i];
+            list += `
+            <li><a href="/?id=${filename}">${filename}</a></li>`
+          }
+          list += `</ul>`
+
           var template = `
           <!doctype html>
           <html>
@@ -21,11 +29,7 @@ var app = http.createServer(function(request, response){
           </head>
           <body>
             <h1><a href="/">WEB</a></h1>
-            <ul>
-              <li><a href="/?id=HTML">HTML</a></li>
-              <li><a href="/?id=CSS">CSS</a></li>
-              <li><a href="/?id=JaveScript">JavaScript</a></li>
-            </ul>
+            ${list}
             <h2>${title}</h2>
             <p>${desc}</p>
           </body>
@@ -34,30 +38,37 @@ var app = http.createServer(function(request, response){
           response.writeHead(200);
           response.end(template);
         });
+
       }else{
         fs.readFile(`data/${queryData.id}`, 'utf8', (err, desc) => {
-          var title = queryData.id;
-          var template = `
-          <!doctype html>
-          <html>
-          <head>
-            <title>WEB1 - ${title}</title>
-            <meta charset="utf-8">
-          </head>
-          <body>
-            <h1><a href="/">WEB</a></h1>
-            <ul>
-              <li><a href="/?id=HTML">HTML</a></li>
-              <li><a href="/?id=CSS">CSS</a></li>
-              <li><a href="/?id=JaveScript">JavaScript</a></li>
-            </ul>
-            <h2>${title}</h2>
-            <p>${desc}</p>
-          </body>
-          </html>
-          `;
-          response.writeHead(200);
-          response.end(template);
+          fs.readdir('./data', function(err, files){
+            var list = `<ul>`
+            for (let i = 0; i < files.length; i++) {
+              var filename = files[i];
+              list += `
+              <li><a href="/?id=${filename}">${filename}</a></li>`
+            }
+            list += `</ul>`
+
+            var title = queryData.id;
+            var template = `
+            <!doctype html>
+            <html>
+            <head>
+              <title>WEB1 - ${title}</title>
+              <meta charset="utf-8">
+            </head>
+            <body>
+              <h1><a href="/">WEB</a></h1>
+              ${list}
+              <h2>${title}</h2>
+              <p>${desc}</p>
+            </body>
+            </html>
+            `;
+            response.writeHead(200);
+            response.end(template);
+          });
         });
       }
     }else{
