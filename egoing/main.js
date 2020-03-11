@@ -54,7 +54,7 @@ var app = http.createServer(function(request, response){
             var title = queryData.id;
             var list = makeTemplateList(files);
             var template = makeTemplateHTML(title, list, `<h2>${title}</h2>${desc}`, 
-            `<a href="/create">Create</a> <a href="/updata?id=${title}">Updata</a>`);
+            `<a href="/create">Create</a> <a href="/update?id=${title}">Update</a>`);
             response.writeHead(200);
             response.end(template);
           });
@@ -65,7 +65,7 @@ var app = http.createServer(function(request, response){
         var title = 'Web - Create';
         var list = makeTemplateList(files);
         var template = makeTemplateHTML(title, list, `
-        <form action="http://localhost:3000/create_process" method="POST">
+        <form action="/create_process" method="POST">
             <p>
                 <input type="text" name="title" placeholder="Title">
             </p>
@@ -94,7 +94,33 @@ var app = http.createServer(function(request, response){
           response.end('success');
         });
       });
-    } else {
+    } else if(pathname ==='/update') {
+      fs.readFile(`data/${queryData.id}`, 'utf8', (err, desc) => {
+        fs.readdir('./data', function(err, files){
+          var title = queryData.id;
+          var list = makeTemplateList(files);
+          var template = makeTemplateHTML(title, list, 
+            `
+            <form action="/update_process" method="POST">
+              <input type="hidden" name="id" value="${title}">
+              <p>
+                  <input type="text" name="title" placeholder="Title" value="${title}">
+              </p>
+              <p>
+                  <textarea name="description" placeholder="Description">${desc}</textarea>
+              </p>
+              <p>
+                  <input type="submit">
+              </p>
+            </form>
+            `, 
+            `<a href="/create">Create</a> <a href="/update?id=${title}">Update</a>`);
+          response.writeHead(200);
+          response.end(template);
+        });
+      });
+    }
+    else {
       response.writeHead(404);
       response.end('Not found');
     }
