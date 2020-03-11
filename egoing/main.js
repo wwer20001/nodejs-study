@@ -3,7 +3,7 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 
-function makeTemplateHTML(title, list, body){
+function makeTemplateHTML(title, list, body, control){
   return `
   <!doctype html>
   <html>
@@ -14,7 +14,7 @@ function makeTemplateHTML(title, list, body){
   <body>
     <h1><a href="/">WEB2</a></h1>
     ${list}
-    <a href="/create">Create</a>
+    ${control}
     ${body}
   </body>
   </html>
@@ -43,7 +43,8 @@ var app = http.createServer(function(request, response){
           var title = 'Welcome';
           var desc = 'Hello, Node.js';
           var list = makeTemplateList(files);
-          var template = makeTemplateHTML(title, list, `<h2>${title}</h2>${desc}`);
+          var template = makeTemplateHTML(title, list, `<h2>${title}</h2>${desc}`, 
+          `<a href="/create">Create</a>`);
           response.writeHead(200);
           response.end(template);
         });
@@ -52,7 +53,8 @@ var app = http.createServer(function(request, response){
           fs.readdir('./data', function(err, files){
             var title = queryData.id;
             var list = makeTemplateList(files);
-            var template = makeTemplateHTML(title, list, `<h2>${title}</h2>${desc}`);
+            var template = makeTemplateHTML(title, list, `<h2>${title}</h2>${desc}`, 
+            `<a href="/create">Create</a> <a href="/updata?id=${title}">Updata</a>`);
             response.writeHead(200);
             response.end(template);
           });
@@ -74,7 +76,7 @@ var app = http.createServer(function(request, response){
                 <input type="submit">
             </p>
         </form>
-        `);
+        `, '');
         response.writeHead(200);
         response.end(template);
       });
