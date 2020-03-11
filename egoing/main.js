@@ -13,6 +13,7 @@ function makeTemplateHTML(title, list, body){
   <body>
     <h1><a href="/">WEB2</a></h1>
     ${list}
+    <a href="/create">Create</a>
     ${body}
   </body>
   </html>
@@ -35,7 +36,6 @@ var app = http.createServer(function(request, response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
-
     if(pathname === '/'){
       if(queryData.id === undefined){
         fs.readdir('./data', function(err, files){
@@ -46,7 +46,6 @@ var app = http.createServer(function(request, response){
           response.writeHead(200);
           response.end(template);
         });
-
       }else{
         fs.readFile(`data/${queryData.id}`, 'utf8', (err, desc) => {
           fs.readdir('./data', function(err, files){
@@ -58,7 +57,27 @@ var app = http.createServer(function(request, response){
           });
         });
       }
-    }else{
+    } else if (pathname === '/create') {
+      fs.readdir('./data', function(err, files){
+        var title = 'Web - Create';
+        var list = makeTemplateList(files);
+        var template = makeTemplateHTML(title, list, `
+        <form action="http://localhost:3000/process_create" method="POST">
+            <p>
+                <input type="text" name="title" placeholder="Title">
+            </p>
+            <p>
+                <textarea name="description" placeholder="Description"></textarea>
+            </p>
+            <p>
+                <input type="submit">
+            </p>
+        </form>
+        `);
+        response.writeHead(200);
+        response.end(template);
+      });
+    } else {
       response.writeHead(404);
       response.end('Not found');
     }
