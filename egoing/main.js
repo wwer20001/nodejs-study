@@ -87,10 +87,11 @@ var app = http.createServer(function(request, response){
         var post = qs.parse(body);
         var title = post.title;
         var desc = post.description;
-        console.log(post);
+        fs.writeFile(`data/${title}`, desc, 'utf8', function(err){
+          response.writeHead(302, {Location: `/?id=${title}`});
+          response.end('success');
+        });
       });
-      response.writeHead(200);
-      response.end('success');
     } else {
       response.writeHead(404);
       response.end('Not found');
