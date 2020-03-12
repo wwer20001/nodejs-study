@@ -48,7 +48,8 @@ var app = http.createServer(function(request, response){
           response.writeHead(200);
           response.end(template);
         });
-      }else{
+      }
+      else{
         fs.readFile(`data/${queryData.id}`, 'utf8', (err, desc) => {
           fs.readdir('./data', function(err, files){
             var title = queryData.id;
@@ -60,7 +61,8 @@ var app = http.createServer(function(request, response){
           });
         });
       }
-    } else if (pathname === '/create') {
+    } 
+    else if (pathname === '/create') {
       fs.readdir('./data', function(err, files){
         var title = 'Web - Create';
         var list = makeTemplateList(files);
@@ -80,7 +82,8 @@ var app = http.createServer(function(request, response){
         response.writeHead(200);
         response.end(template);
       });
-    } else if(pathname === '/create_process') {
+    } 
+    else if(pathname === '/create_process') {
       var body = '';
       request.on('data',function(data){
         body += data;
@@ -94,7 +97,8 @@ var app = http.createServer(function(request, response){
           response.end('success');
         });
       });
-    } else if(pathname ==='/update') {
+    } 
+    else if(pathname ==='/update') {
       fs.readFile(`data/${queryData.id}`, 'utf8', (err, desc) => {
         fs.readdir('./data', function(err, files){
           var title = queryData.id;
@@ -118,6 +122,26 @@ var app = http.createServer(function(request, response){
           response.writeHead(200);
           response.end(template);
         });
+      });
+    }
+    else if(pathname ==='/update_process') {
+      var body = '';
+      request.on('data',function(data){
+        body += data;
+      });
+      request.on('end', function(){
+        var post = qs.parse(body);
+        var id = post.id;
+        var title = post.title;
+        var desc = post.description;
+        console.log(post);
+        fs.rename(`data/${id}`, `data/${title}`, function(err){
+          fs.writeFile(`data/${title}`, desc, 'utf8', function(err){
+          response.writeHead(302, {Location: `/?id=${title}`});
+          response.end('success');
+        });
+        });
+
       });
     }
     else {
