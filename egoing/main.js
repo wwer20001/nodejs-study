@@ -139,14 +139,27 @@ var app = http.createServer(function(request, response){
         var id = post.id;
         var title = post.title;
         var desc = post.description;
-        console.log(post);
         fs.rename(`data/${id}`, `data/${title}`, function(err){
-          fs.writeFile(`data/${title}`, desc, 'utf8', function(err){
-          response.writeHead(302, {Location: `/?id=${title}`});
-          response.end('success');
-        });
+            fs.writeFile(`data/${title}`, desc, 'utf8', function(err){
+            response.writeHead(302, {Location: `/?id=${title}`});
+            response.end('success');
+          });
         });
 
+      });
+    }
+    else if(pathname ==='/delete_process') {
+      var body = '';
+      request.on('data',function(data){
+        body += data;
+      });
+      request.on('end', function(){
+        var post = qs.parse(body);
+        var id = post.id;
+        fs.unlink(`data/${id}`, function(err){
+          response.writeHead(302, {Location: `/`});
+          response.end('success');
+        });
       });
     }
     else {
