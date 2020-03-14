@@ -1,0 +1,6 @@
+<h1>this is dirty</h2>
+<script>
+alert('dirty')
+loaction.href='https://naver.com'
+</script>
+end.
